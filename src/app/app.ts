@@ -1,12 +1,23 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { Toolbar } from "./components/toolbar/toolbar";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, FormsModule, MatButtonModule, Toolbar],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App {
-  protected readonly title = signal('MyAngularMay2026');
+  calculate_area(width: number, height: number){
+
+  }
+
+  saveData(){
+    let age: number = 20;  
+  }
+
+
 }
