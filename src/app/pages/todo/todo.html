@@ -18,7 +18,7 @@
                                 </mat-icon>
                             </button>
                             <span class="todo-name">{{ todo.title }}</span>
-                            <button mat-button class="delete">
+                            <button mat-button class="delete" (click)="onDelete($index)">
                                 <mat-icon>delete_forever</mat-icon>
                             </button>
                         </div>

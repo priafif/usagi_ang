@@ -22,8 +22,11 @@ export class Add {
   }
 
   onSubmit(){
-
+    let formData = this.todoForm.value;
+    let title = formData.title;
+    if(title != '') this.dialogRef.close(title);
   }
+
   onCancel(){
     this.dialogRef.close();
   }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { SharedModules } from '../../shared/shared.module';
 import { Add } from '../../components/add/add';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,7 +21,10 @@ export class Todo {
     { title: 'Buy groceries', selected: false }
   ];
 
-  constructor(public dialog: MatDialog){
+  constructor(
+    public dialog: MatDialog,
+    private cdr: ChangeDetectorRef
+  ){
 
   }
 
@@ -29,8 +32,21 @@ export class Todo {
     this.todoList[index].selected = !this.todoList[index].selected;
   }
 
+  onDelete(index: number){
+    let confirmation = confirm('Are you sure you want to delete this item?');
+    if(confirmation){
+      this.todoList.splice(index, 1);
+    }
+  }
+
   onAdd(){
     const dialogRef = this.dialog.open(Add);
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if(result){
+        this.todoList.push({ title: result, selected: false });
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   onClear(){
