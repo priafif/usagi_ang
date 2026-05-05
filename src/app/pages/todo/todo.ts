@@ -50,7 +50,23 @@ export class Todo {
   }
 
   onClear(){
+    let confirmation = confirm('Are you sure you want to clear the todo list?');
+    if(confirmation){
+      this.todoList = [];
+    }
+  }
 
+  onEdit(index: number){
+    const todoItem = this.todoList[index];
+    const dialogRef = this.dialog.open(Add, {
+      data: { title: todoItem.title }
+    });
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if(result){
+        this.todoList[index].title = result;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
 }
