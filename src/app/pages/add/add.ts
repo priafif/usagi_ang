@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SharedModules } from '../../shared/shared.module';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Api } from '../../services/api';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Ui } from '../../services/ui';
 
 @Component({
   selector: 'app-add',
@@ -10,18 +11,40 @@ import { Router } from '@angular/router';
   templateUrl: './add.html',
   styleUrl: './add.scss',
 })
-export class Add {
+export class Add implements OnInit {
   public reportForm: FormGroup;
+  public id: any;
   constructor(
     public formBuilder: FormBuilder,
     public apiService: Api,
-    public router: Router
+    public router: Router,
+    public activatedRoute: ActivatedRoute,
+    public uiServices: Ui
   ){
     this.reportForm = this.formBuilder.group({
       title: ['', Validators.required],
       date: ['', Validators.required],
       category: ['', Validators.required],
     })
+  }
+
+  async ngOnInit(){
+    this.id = this.activatedRoute.snapshot.paramMap.get('id');
+    if(this.id){
+      try{
+        let response: any = await this.apiService.httpGet('/reports/'+this.id);
+        if(response.success){
+          let report = response.data;
+          this.reportForm.setValue({
+            title: report.title,
+            category: report.category,
+            date: this.parseApiDate(report.date)
+          })
+        }
+      } catch(error){
+        console.error(error);
+      }
+    }
   }
 
   private parseApiDate(value: string | Date | null): Date | null {
@@ -78,8 +101,18 @@ export class Add {
         ...rawData,
         date: this.formatDateToString(rawData.date) ?? rawData.date
       }
+      let message: string = 'Report submitted successfully';
+      if(this.id){
+        var res = await this.apiService.httpPost('/reports/update/'+this.id, reportData, 'put');
+        message = 'Report updated successfully'
+      } else {
+        var res = await this.apiService.httpPost('/reports/add', reportData);
+      }
 
-      let res = await this.apiService.httpPost('/reports/add', reportData);
+      if(res){
+        this.uiServices.openSnackBar(message, 'OK');
+      }
+
       this.router.navigateByUrl('/reports');
     } catch(error){
       console.log(error);
