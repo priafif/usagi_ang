@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SharedModules } from '../../shared/shared.module';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, RouterLink } from '@angular/router';
+import { Api } from '../../services/api';
 
 interface reportItem {
   title: string,
@@ -15,7 +16,7 @@ interface reportItem {
   templateUrl: './reports.html',
   styleUrl: './reports.scss',
 })
-export class Reports {
+export class Reports implements OnInit {
   public reportList: reportItem[] = [
     {title: 'Sample report title 1', category: 'Sample category', date: '01/01/1978'}
   ];
@@ -23,8 +24,16 @@ export class Reports {
   public displayedColumns: string[] = ['no', 'title', 'date', 'actions'];
 
   constructor(
-    private router: Router
-  ){
+    private router: Router,
+    private apiServices: Api
+  ){}
 
+  async ngOnInit(){
+    try{
+      let response: any = await this.apiServices.httpGet('/reports');
+      console.log(response);
+    } catch(error){
+
+    }
   }
 }
