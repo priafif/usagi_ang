@@ -3,6 +3,7 @@ import { SharedModules } from '../../shared/shared.module';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, RouterLink } from '@angular/router';
 import { Api } from '../../services/api';
+import { Data } from '../../services/data';
 
 interface reportItem {
   title: string,
@@ -26,8 +27,15 @@ export class Reports implements OnInit {
   constructor(
     private router: Router,
     private apiServices: Api,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dataService: Data
   ){}
+
+  onLogout(){
+    this.dataService.removeStorage('TOKEN');
+    this.dataService.removeStorage('USER');
+    this.router.navigateByUrl('/login');
+  }
 
   async ngOnInit(){
     try{

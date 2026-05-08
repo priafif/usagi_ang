@@ -28,19 +28,23 @@ export class Api {
 
   httpPost(path: string, payload: any, method?: string){
     let fullURL: string = this.baseURL+path;
-    let headers = {headers: new HttpHeaders};
+    let headers = { headers: new HttpHeaders() };
     // let token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJyYWhtYW5AbWFpbC5jb20iLCJpYXQiOjE3NzgxMzk5MjgsImV4cCI6MTc3ODE0MzUyOH0.CuAzh80pMWBZAXsoO0alJWb0is0bE301lA4IF6FU9T0';
     let token: string = this.dataService.loadStorage('TOKEN');
     let user: any = this.dataService.loadStorage('USER');
-    
+    let isFormData = payload instanceof FormData;
     if(user){
-      payload = {...payload, user_id: user.id};
+      if(isFormData){
+        payload.append('user_id', user.id);
+      } else {
+        payload = {...payload, user_id: user.id};
+      }
     }
 
     if(token){
       headers = {headers: new HttpHeaders({
         Authorization: `Bearer ${token}`
-      }).set('Content-Type', 'application/json')};
+      })};
     }
     return new Promise((resolve, reject)=>{
       if(method == 'put'){

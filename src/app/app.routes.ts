@@ -5,6 +5,7 @@ import { Todo } from './pages/todo/todo';
 import { Reports } from './pages/reports/reports';
 import { Add } from './pages/add/add';
 import { Login } from './pages/login/login';
+import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
     {
@@ -26,15 +27,18 @@ export const routes: Routes = [
     },
     {
         path: 'reports',
-        component: Reports
+        component: Reports,
+        canActivate: [authGuard]
     },
     {
         path: 'add',
-        component: Add
+        component: Add,
+        canActivate: [authGuard]
     },
     {
         path: 'update/:id',
-        component: Add
+        component: Add,
+        canActivate: [authGuard]
     },
     {
         path: 'login',

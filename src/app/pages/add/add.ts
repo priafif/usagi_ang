@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { SharedModules } from '../../shared/shared.module';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Api } from '../../services/api';
@@ -14,6 +14,9 @@ import { Ui } from '../../services/ui';
 export class Add implements OnInit {
   public reportForm: FormGroup;
   public id: any;
+  public selectedFile: File | null = null;
+  @ViewChild('fileInput', {static: false}) fileInput!: ElementRef;
+
   constructor(
     public formBuilder: FormBuilder,
     public apiService: Api,
@@ -26,6 +29,11 @@ export class Add implements OnInit {
       date: ['', Validators.required],
       category: ['', Validators.required],
     })
+  }
+
+  onFileSelected(event: any){
+      const file: File = event.target.files[0];
+      if(file) this.selectedFile = file;
   }
 
   async ngOnInit(){
@@ -101,12 +109,21 @@ export class Add implements OnInit {
         ...rawData,
         date: this.formatDateToString(rawData.date) ?? rawData.date
       }
+
+      const formData = new FormData();
+      formData.append('title', reportData.title);
+      formData.append('date', reportData.date);
+      formData.append('category', reportData.category);
+
+      if(this.selectedFile) formData.append('image', this.selectedFile, this.selectedFile.name);
+
       let message: string = 'Report submitted successfully';
+
       if(this.id){
-        var res = await this.apiService.httpPost('/reports/update/'+this.id, reportData, 'put');
+        var res = await this.apiService.httpPost('/reports/update/'+this.id, formData, 'put');
         message = 'Report updated successfully'
       } else {
-        var res = await this.apiService.httpPost('/reports/add', reportData);
+        var res = await this.apiService.httpPost('/reports/add', formData);
       }
 
       if(res){
