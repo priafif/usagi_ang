@@ -3,6 +3,7 @@ import { SharedModules } from '../../shared/shared.module';
 import { Add } from '../../components/add/add';
 import { MatDialog } from '@angular/material/dialog';
 import { ConvertPipe } from '../../pipes/convert-pipe';
+import { Data } from '../../services/data';
 
 interface TodoItem {
   title: string,
@@ -25,24 +26,25 @@ export class Todo implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dataService: Data
   ){}
 
   ngOnInit(){
-    const data: any = this.loadStorage('TODO') || [];
+    const data: any = this.dataService.loadStorage('TODO') || [];
     this.todoList = data;
   }
 
   onSelected(index: number){
     this.todoList[index].selected = !this.todoList[index].selected;
-    this.saveStorage('TODO', this.todoList);
+    this.dataService.saveStorage('TODO', this.todoList);
   }
 
   onDelete(index: number){
     let confirmation = confirm('Are you sure you want to delete this item?');
     if(confirmation){
       this.todoList.splice(index, 1);
-      this.saveStorage('TODO', this.todoList);
+      this.dataService.saveStorage('TODO', this.todoList);
     }
   }
 
@@ -51,7 +53,7 @@ export class Todo implements OnInit {
     dialogRef.afterClosed().subscribe((result: any) => {
       if(result){
         this.todoList.push({ title: result, selected: false });
-        this.saveStorage('TODO', this.todoList);
+        this.dataService.saveStorage('TODO', this.todoList);
         this.cdr.detectChanges();
       }
     });
@@ -61,7 +63,7 @@ export class Todo implements OnInit {
     let confirmation = confirm('Are you sure you want to clear the todo list?');
     if(confirmation){
       this.todoList = [];
-      this.saveStorage('TODO', this.todoList);
+      this.dataService.saveStorage('TODO', this.todoList);
     }
   }
 
@@ -73,19 +75,10 @@ export class Todo implements OnInit {
     dialogRef.afterClosed().subscribe((result: any) => {
       if(result){
         this.todoList[index].title = result;
-        this.saveStorage('TODO', this.todoList);
+        this.dataService.saveStorage('TODO', this.todoList);
         this.cdr.detectChanges();
       }
     });
-  }
-
-  saveStorage(key: string, value: any){
-    localStorage.setItem(key, JSON.stringify(value));
-  }
-
-  loadStorage(key: string){
-    const item = localStorage.getItem(key);
-    return item ? JSON.parse(item) : null;
   }
 
 }

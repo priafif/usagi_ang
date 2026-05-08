@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Data } from './data';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +8,10 @@ import { Injectable } from '@angular/core';
 export class Api {
   // private baseURL: string = 'https://myexpressapr2026new-production.up.railway.app/api';
   private baseURL: string = 'http://localhost:3000/api';
-  constructor(private http: HttpClient){
+  constructor(
+    private http: HttpClient,
+    private dataService: Data
+  ){
 
   }
 
@@ -25,8 +29,13 @@ export class Api {
   httpPost(path: string, payload: any, method?: string){
     let fullURL: string = this.baseURL+path;
     let headers = {headers: new HttpHeaders};
-    let token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJyYWhtYW5AbWFpbC5jb20iLCJpYXQiOjE3NzgxMzk5MjgsImV4cCI6MTc3ODE0MzUyOH0.CuAzh80pMWBZAXsoO0alJWb0is0bE301lA4IF6FU9T0';
-    payload = {...payload, user_id: 1};
+    // let token: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NywiZW1haWwiOiJyYWhtYW5AbWFpbC5jb20iLCJpYXQiOjE3NzgxMzk5MjgsImV4cCI6MTc3ODE0MzUyOH0.CuAzh80pMWBZAXsoO0alJWb0is0bE301lA4IF6FU9T0';
+    let token: string = this.dataService.loadStorage('TOKEN');
+    let user: any = this.dataService.loadStorage('USER');
+    
+    if(user){
+      payload = {...payload, user_id: user.id};
+    }
 
     if(token){
       headers = {headers: new HttpHeaders({
