@@ -1,7 +1,6 @@
-<<<<<<< HEAD
-# MyAngularMay2026
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.9.
+# USAGI
+g [Angular CLI](https://github.com/angular/angular-cli) version 21.2.9.
 
 ## Development server
 
@@ -59,6 +58,4 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
 =======
-# usagi_ang
-usagi ang
->>>>>>> 90938e719b81cc8ff5278683396ec20a30cfea2c
+
